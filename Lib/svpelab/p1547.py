@@ -886,11 +886,11 @@ class module_1547(object):
         # TODO : This is returning the MIN and Max but not the target value
 
         if isinstance(x_target, dict):
-            for x_meas_variable, x_meas_value in x_target.iteritems():
+            for x_meas_variable, x_meas_value in x_target.items():
                 daq.sc['%s_TARGET' % x_meas_variable] = x_meas_value
 
         if isinstance(y_target, dict):
-            for y_meas_variable, y_meas_value in y_target.iteritems():
+            for y_meas_variable, y_meas_value in y_target.items():
                 daq.sc['%s_TARGET' % y_meas_variable] = y_meas_value
                 if y_meas_variable == 'P':
                     msa = self.MSA_P
@@ -1035,7 +1035,7 @@ class module_1547(object):
         if isinstance(ys, list):
             for y in ys:
                 analysis['%s_INITIAL' % y] = initial_value['%s_MEAS' % y]
-        for tr_iter, tr_value in tr_values.items():
+        for tr_iter, tr_value in list(tr_values.items()):
             #self.ts.log_debug('Tr value=%s' % tr_value)
             for meas_value in self.meas_values:
                 analysis['%s_TR_%s' % (meas_value, tr_iter)] = tr_value['%s_MEAS' % meas_value]
@@ -1067,7 +1067,7 @@ class module_1547(object):
                     # [0] Open Loop Time Response (OLTR) (90% of (y_final-y_intiial) + y_initial),
                     if self.criteria_mode[0]:
 
-                        last_tr_value = tr_values[next(reversed(tr_values.keys()))]
+                        last_tr_value = tr_values[next(reversed(list(tr_values.keys())))]
                         #self.ts.log_debug('Last TR value: %s' % last_tr_value)
                         #tr_diff = last_tr_value[ys]['y_value'] - analysis['%s_INITIAL' % ys]
                         tr_diff = last_tr_value['%s_MEAS' % meas_value] - analysis['%s_INITIAL' % meas_value]
@@ -1086,11 +1086,11 @@ class module_1547(object):
                                 analysis['TR_90_%_PF'] = 'Fail'
                 last_tr = tr_iter
 
-        analysis['FIRST_ITER'] = next(iter(tr_values.keys()))
+        analysis['FIRST_ITER'] = next(iter(list(tr_values.keys())))
         analysis['LAST_ITER'] = last_tr
         if self.criteria_mode[1] or self.criteria_mode[2]:
             for y in ys:
-                for tr_iter, tr_dic in tr_values.items():
+                for tr_iter, tr_dic in list(tr_values.items()):
                     if (analysis['FIRST_ITER'] == tr_iter and self.criteria_mode[1]) or (analysis['LAST_ITER'] == tr_iter and self.criteria_mode[2]):
                         if analysis['%s_TR_%s_MIN' % (y, tr_iter)] <= analysis['%s_TR_%s' % (y, tr_iter)] <= analysis['%s_TR_%s_MAX' % (y, tr_iter)]:
                             analysis['%s_TR_%s_PF' % (y, tr_iter)] = 'Pass'

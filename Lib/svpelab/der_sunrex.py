@@ -1,6 +1,6 @@
 
 import os
-import der
+from . import der
 import sunspec.core.client as client
 import svp.script as script
 import socket
@@ -41,7 +41,7 @@ def four_digit_hex(integer=None):
     return format((to_uint(integer)), '04X')
 
 
-def unicode(cmd_str=None):
+def str(cmd_str=None):
     bcc = 0
     cmd_str_chars = list(cmd_str)
     for cmd_chars in cmd_str_chars:
@@ -57,7 +57,7 @@ def der_init(ts, id=None):
     group_name = 'der'
     if id is not None:
         group_name = group_name + '_' + str(id)
-    print 'run group_name = %s' % group_name
+    print('run group_name = %s' % group_name)
     mode = ts.param_value(group_name + '.' + 'mode')
     sim_module = der_modules.get(mode)
     if sim_module is not None:
@@ -113,7 +113,7 @@ class DER(der.DER):
             params['Options'] = None
             params['Version'] = None
             params['SerialNumber'] = None
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -158,7 +158,7 @@ class DER(der.DER):
                     cmd_str = ':PCS:SABT F2 '
                     for fw in curve:
                         cmd_str += four_digit_hex(fw) + ','
-                    bcc = unicode(cmd_str)
+                    bcc = str(cmd_str)
                     cmd_str += two_digit_hex(bcc) + '\n'
 
                 win_tms = params.get('WinTms')
@@ -186,7 +186,7 @@ class DER(der.DER):
                     params['RmpTms'] = None
                     params['RvrtTms'] = None
                     params['curve'] = self.freq_watt_curve(id=1)
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
     def freq_watt_curve(self, id, params=None):
@@ -240,7 +240,7 @@ class DER(der.DER):
                 cmd_str = ':PCS:SABT ES '
                 for p in power_set:
                     cmd_str += four_digit_hex(p) + ','
-                bcc = unicode(cmd_str)
+                bcc = str(cmd_str)
                 cmd_str += two_digit_hex(bcc) + '\n'
                 self.ts.debug(cmd_str)
                 self.send_command(cmd_str)
@@ -253,7 +253,7 @@ class DER(der.DER):
                 params['RmpTms'] = None
                 params['RvrtTms'] = None
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -305,7 +305,7 @@ class DER(der.DER):
                 cmd_str = ':PCS:SABT V3 '
                 for q in q_set:
                     cmd_str += four_digit_hex(q) + ','
-                bcc = unicode(cmd_str)
+                bcc = str(cmd_str)
                 cmd_str += two_digit_hex(bcc) + '\n'
 
                 self.ts.debug(cmd_str)
@@ -319,7 +319,7 @@ class DER(der.DER):
                 params['VArMaxPct'] = None
                 params['VArAvalPct'] = None
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -357,7 +357,7 @@ class DER(der.DER):
                 # construct the power command string
                 for vv in curve:
                     cmd_str += four_digit_hex(vv) + ','
-                bcc = unicode(cmd_str)
+                bcc = str(cmd_str)
                 cmd_str += two_digit_hex(bcc) + '\n'
 
                 win_tms = params.get('WinTms')
@@ -384,7 +384,7 @@ class DER(der.DER):
                 params['RvrtTms'] = None
                 params['curve'] = self.volt_var_curve(id=1)  # use 1 as default
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -432,7 +432,7 @@ class DER(der.DER):
                 # create reactive power command
                 cmd_str = ':PCS:SABT N3 '
                 cmd_str += four_digit_hex(pf) + ','
-                bcc = unicode(cmd_str)
+                bcc = str(cmd_str)
                 cmd_str += two_digit_hex(bcc) + '\n'
 
                 win_tms = params.get('WinTms')
@@ -455,7 +455,7 @@ class DER(der.DER):
                 params['WinTms'] = None
                 params['RmpTms'] = None
                 params['RvrtTms'] = None
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params

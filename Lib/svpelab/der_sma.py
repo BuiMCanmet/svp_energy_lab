@@ -31,12 +31,12 @@ Questions can be directed to support@sunspec.org
 """
 try:
     import os
-    import der
+    from . import der
     import script
     import sunspec.core.modbus.client as client
     import sunspec.core.util as util
-except Exception, e:
-    print('Import problem in der_sma.py: %s' % e)
+except Exception as e:
+    print(('Import problem in der_sma.py: %s' % e))
     raise der.DERError('Import problem in der_sma.py: %s' % e)
 
 sma_info = {
@@ -104,7 +104,7 @@ class DER(der.DER):
         """
 
         if new_gg is not None:
-            print('Writing new Grid Guard: %d' % new_gg)
+            print(('Writing new Grid Guard: %d' % new_gg))
             self.inv.write(43090, util.u32_to_data(int(new_gg)))
 
         data = self.inv.read(43090, 2)
@@ -200,7 +200,7 @@ class DER(der.DER):
             params['EvtVnd2'] = None
             params['EvtVnd3'] = None
             params['EvtVnd4'] = None
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -272,7 +272,7 @@ class DER(der.DER):
                     params['Conn'] = True
                 else:
                     params['Conn'] = False
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -330,7 +330,7 @@ class DER(der.DER):
                     params['Ena'] = False
                 pf = None
                 params['PF'] = pf
-        except Exception, e:
+        except Exception as e:
             der.DERError(str(e))
 
         return params
@@ -381,7 +381,7 @@ class DER(der.DER):
                 # params['WMaxPct'] = util.data_to_u32(self.inv.read(40147, 2))
                 # params['WMaxPct'] = util.data_to_s32(self.inv.read(40149, 2))
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -475,7 +475,7 @@ class DER(der.DER):
                 params['NCrv'] = 3  # SMA supports 3 curves
                 if params['ActCrv'] is not None:
                     params['curve'] = self.volt_var_curve(id=params['ActCrv'])
-        except Exception, e:
+        except Exception as e:
             der.DERError(str(e))
 
         return params
@@ -495,12 +495,12 @@ class DER(der.DER):
         if self.inv is None:
             raise der.DERError('DER not initialized')
 
-        x1 = range(40282, 40306, 2)  # X values 1 to 12 of the characteristic curve 1
-        y1 = range(40306, 40330, 2)  # Y values 1 to 12 of the characteristic curve 1
-        x2 = range(40330, 40354, 2)  # X values 1 to 12 of the characteristic curve 2
-        y2 = range(40354, 40378, 2)  # Y values 1 to 12 of the characteristic curve 2
-        x3 = range(40378, 40402, 2)  # X values 1 to 12 of the characteristic curve 3
-        y3 = range(40402, 40426, 2)  # Y values 1 to 12 of the characteristic curve 3
+        x1 = list(range(40282, 40306, 2))  # X values 1 to 12 of the characteristic curve 1
+        y1 = list(range(40306, 40330, 2))  # Y values 1 to 12 of the characteristic curve 1
+        x2 = list(range(40330, 40354, 2))  # X values 1 to 12 of the characteristic curve 2
+        y2 = list(range(40354, 40378, 2))  # Y values 1 to 12 of the characteristic curve 2
+        x3 = list(range(40378, 40402, 2))  # X values 1 to 12 of the characteristic curve 3
+        y3 = list(range(40402, 40426, 2))  # Y values 1 to 12 of the characteristic curve 3
 
         volt_var_dept_ref = {
             'W_MAX_PCT': 1,
@@ -564,7 +564,7 @@ class DER(der.DER):
                         self.inv.write(40961, util.u32_to_data(1976))  # Voltage in percentages of Un
                     '''
 
-                    for i in xrange(v_len):  # SunSpec point index starts at 1
+                    for i in range(v_len):  # SunSpec point index starts at 1
                         if id == 1:
                             v_val = int(util.data_to_s32(self.inv.read(x1[i], 2)))
                             self.ts.log_debug('Voltage point %s is %s' % (i, v_val))
@@ -582,7 +582,7 @@ class DER(der.DER):
                     var_len = len(var)
                     # if var_len > n_pt:
                     #     raise der.DERError('VAr point count out of range: %d' % (var_len))
-                    for i in xrange(var_len):  # SunSpec point index starts at 1
+                    for i in range(var_len):  # SunSpec point index starts at 1
                         if id == 1:
                             self.inv.write(y1[i], util.s32_to_data(int(round(var[i], 3)*1000)))
                             self.inv.write(40977, util.u32_to_data(1977))  # Var in percentages of Pmax
@@ -603,7 +603,7 @@ class DER(der.DER):
                     n_pt = int(util.data_to_u32(self.inv.read(40262, 2)))
                     # if n_pt < 1 or n_pt > 12:
                     #     raise der.DERError('Unsupported number of VV points. n_pt: %s' % n_pt)
-                    for i in xrange(int(4)):
+                    for i in range(int(4)):
                         self.ts.log('Getting V%s' % i)
                         v.append(util.data_to_s32(self.inv.read(x1[i], 2))/1000.)
                         self.ts.log('Getting Q%s' % i)
@@ -613,14 +613,14 @@ class DER(der.DER):
                     self.ts.log_debug('n_pt %s' % n_pt)
                     if n_pt < 1 or n_pt > 12:
                         raise der.DERError('Unsupported number of VV points. n_pt: %s' % n_pt)
-                    for i in xrange(int(n_pt)):
+                    for i in range(int(n_pt)):
                         v.append(util.data_to_s32(self.inv.read(x2[i], 2))/1000)
                         var.append(util.data_to_s32(self.inv.read(y2[i], 2))/1000)
                 else:
                     n_pt = int(util.data_to_u32(self.inv.read(40266, 2)))
                     if n_pt < 1 or n_pt > 12:
                         raise der.DERError('Unsupported number of VV points. n_pt: %s' % n_pt)
-                    for i in xrange(int(n_pt)):
+                    for i in range(int(n_pt)):
                         v.append(util.data_to_s32(self.inv.read(x3[i], 2))/1000)
                         var.append(util.data_to_s32(self.inv.read(y3[i], 2))/1000)
 
@@ -630,7 +630,7 @@ class DER(der.DER):
                 params['v'] = v
                 params['var'] = var
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -804,7 +804,7 @@ class DER(der.DER):
                 params['VArWMaxPct'] = util.data_to_s32(self.inv.read(40204, 2))  # Reactive power setpoint (%)
 
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params
@@ -868,7 +868,7 @@ class DER(der.DER):
                 # params['P'] = util.data_to_s32(self.inv.read(40149, 2))
                 params['P'] = util.data_to_u32(self.inv.read(40214, 2))
 
-        except Exception, e:
+        except Exception as e:
             raise der.DERError(str(e))
 
         return params

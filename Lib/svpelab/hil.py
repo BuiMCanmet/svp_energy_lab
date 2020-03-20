@@ -65,7 +65,7 @@ hil_modules = {}
 def params(info):
     info.param_group('hil', label='HIL Parameters', glob=True)
     info.param('hil.mode', label='HIL Environment', default='Disabled', values=['Disabled'])
-    for mode, m in hil_modules.iteritems():
+    for mode, m in hil_modules.items():
         m.params(info)
 
 
@@ -180,7 +180,7 @@ def hil_scan():
             else:
                 if module_name is not None and module_name in sys.modules:
                     del sys.modules[module_name]
-        except Exception, e:
+        except Exception as e:
             if module_name is not None and module_name in sys.modules:
                 del sys.modules[module_name]
             raise HILError('Error scanning module %s: %s' % (module_name, str(e)))

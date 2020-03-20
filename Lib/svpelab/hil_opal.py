@@ -30,7 +30,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 Questions can be directed to support@sunspec.org
 """
 import os
-import hil
+from . import hil
 import sys
 from time import sleep
 # import glob
@@ -208,7 +208,7 @@ class HIL(hil.HIL):
             # projectId = RtlabApi.OpenProject(project='', functionalBlock=None,
             #                                  controlPriority=OP_CTRL_PRIO_NORMAL, returnOnAmbiguity=False)
             RtlabApi.OpenProject(proj_path)
-        except Exception, e:
+        except Exception as e:
             self.ts.log_warning('Could not open the project %s: %s' % (proj_path, e))
             raise
         self.ts.log('Opened Project: %s' % self.project_name)
@@ -225,7 +225,7 @@ class HIL(hil.HIL):
         """
         try:
             RtlabApi.CloseProject()
-        except Exception, e:
+        except Exception as e:
             self.ts.log_error('Unable to close project. %s' % e)
 
     def info(self):
@@ -250,7 +250,7 @@ class HIL(hil.HIL):
                 RtlabApi.GetSystemControl(state)
             else:
                 self.ts.log_warning('Incorrect GetSystemControl state provided: state = %s' % state)
-        except Exception, e:
+        except Exception as e:
             self.ts.log_warning('Error getting system control: %s' % e)
         pass
 
@@ -350,7 +350,7 @@ class HIL(hil.HIL):
             model_info["modelId"] = RtlabApi.FindObjectId(RtlabApi.OP_TYPE_MODEL, model_info["mdlPath"])
             RtlabApi.SetAttribute(model_info["modelId"], RtlabApi.ATT_FORCE_RECOMPILE, True)
             self.ts.log('Using default model. %s%s' % (model_info["mdlFolder"], model_info["mdlName"]))
-        except Exception, e:
+        except Exception as e:
             self.ts.log_warning('Error using Current Model: %s' % e)
 
             try:
@@ -360,7 +360,7 @@ class HIL(hil.HIL):
                 model_info["modelId"] = RtlabApi.FindObjectId(RtlabApi.OP_TYPE_MODEL, model_info["mdlPath"])
                 RtlabApi.SetAttribute(model_info["modelId"], RtlabApi.ATT_FORCE_RECOMPILE, True)
 
-            except Exception, e:
+            except Exception as e:
                 self.ts.log_warning('Error compiling model %s: %s' % (model_info["mdlPath"], e))
 
         if self.model_state() == 'Model Paused':
@@ -389,7 +389,7 @@ class HIL(hil.HIL):
                     self.ts.log(msg)
                     _, _, msg = RtlabApi.DisplayInformation(100)
 
-            except Exception, exc:
+            except Exception as exc:
                 # Ignore error 11 which is raised when RtlabApi.DisplayInformation is called when there is no
                 # pending message
                 info = sys.exc_info()
@@ -400,7 +400,7 @@ class HIL(hil.HIL):
 
         # Because we use a comma after print when forward compilation log into python log we have to ensure to
         # write a carriage return when finished.
-        print ''
+        print('')
 
         # Get project status to check is compilation succeeded
         if self.model_state() == 'Model Loadable':
@@ -491,10 +491,10 @@ class HIL(hil.HIL):
         import glob
         projectName = os.path.abspath(str(glob.glob('.\\..\\*.llp')[0]))
         RtlabApi.OpenProject(projectName)
-        print "The connection with '%s' is completed." % projectName
+        print("The connection with '%s' is completed." % projectName)
 
         modelState, realTimeMode = RtlabApi.GetModelState()
-        print('Model State: %s, Real Time Mode: %s' % (modelState, realTimeMode))
+        print(('Model State: %s, Real Time Mode: %s' % (modelState, realTimeMode)))
 
         TargetPlatform = RtlabApi.GetTargetPlatform()
         nodelist = RtlabApi.GetPhysNodeList()
@@ -503,15 +503,15 @@ class HIL(hil.HIL):
             if len(nodelist) > 0:
                 TargetName = nodelist[0]
 
-                print "List of Physicals Nodes available to run the script: ", nodelist
-                print "The script will be executed on the first Physical Node"
-                print "Selected Physical Node is: ", TargetName
-                print " "
+                print("List of Physicals Nodes available to run the script: ", nodelist)
+                print("The script will be executed on the first Physical Node")
+                print("Selected Physical Node is: ", TargetName)
+                print(" ")
                 try:
                     # Register Display information to get the target script STD output
                     RtlabApi.RegisterDisplay(1)
 
-                    print("Transferring the script :\n%s \nto the physical node %s" % (scriptFullPath, TargetName))
+                    print(("Transferring the script :\n%s \nto the physical node %s" % (scriptFullPath, TargetName)))
                     RtlabApi.PutTargetFile(TargetName, scriptFullPath, "/home/ntuser/", RtlabApi.OP_TRANSFER_ASCII, 0)
 
                     # Executing the script on the target
@@ -519,7 +519,7 @@ class HIL(hil.HIL):
 
                     # Displaying the STD output of the script
                     print("*************Script output on the target************")
-                    print(RtlabApi.DisplayInformation(0)[2])
+                    print((RtlabApi.DisplayInformation(0)[2]))
                     print("****************************************************")
                 finally:
                     pass
@@ -638,8 +638,8 @@ if __name__ == "__main__":
 
     system_info = RtlabApi.GetTargetNodeSystemInfo("Target_3")
     for i in range(len(system_info)):
-        print(system_info[i])
-    print("OPAL-RT - Platform version {0} (IP address : {1})".format(system_info[1], system_info[6]))
+        print((system_info[i]))
+    print(("OPAL-RT - Platform version {0} (IP address : {1})".format(system_info[1], system_info[6])))
 
     projectName = "C:\\Users\\DETLDAQ\\OPAL-RT\\RT-LABv2019.1_Workspace\\" \
                   "IEEE_1547.1_Phase_Jump\\IEEE_1547.1_Phase_Jump.llp"
@@ -657,10 +657,10 @@ if __name__ == "__main__":
         print("The model is not loadable.")
 
     for loop in range(2):
-        print("Run times: %s" % loop)
+        print(("Run times: %s" % loop))
 
         status, _ = RtlabApi.GetModelState()
-        print('Status is: %s' % status)
+        print(('Status is: %s' % status))
         if status == RtlabApi.MODEL_PAUSED:
             RtlabApi.Execute(1)
             modelState, realTimeMode = RtlabApi.GetModelState()
@@ -669,9 +669,9 @@ if __name__ == "__main__":
 
         model_parameters = RtlabApi.GetParametersDescription()
         for param in range(len(model_parameters)):
-            print('Param: %s, %s is %s' % (model_parameters[param][1],
+            print(('Param: %s, %s is %s' % (model_parameters[param][1],
                                            model_parameters[param][2],
-                                           model_parameters[param][4]))
+                                           model_parameters[param][4])))
 
         # print('Simulation time is: %s' % [RtlabApi.GetTimeInfo()])
         # print('Simulation time is: %s' % (RtlabApi.GetPauseTime()))
