@@ -37,7 +37,7 @@ import datetime
 import numpy as np
 
 try:
-    from . import dewenetcontroller.dewenetcontroller as dewe
+    from . import dewenetcontroller as dewe
 except Exception as e:
     print(('Missing dewecontroller. %s' % e))
 

@@ -168,9 +168,9 @@ class GridSim(gridsim.GridSim):
         return state
 
     def cmd_run(self):
-	relay = self.query(':AC:STAT:READ?\n').strip()
-      	if relay == ':AC:STAT:READ 1':
-        	self.cmd(':AC:CONT:RUN 1')
+        relay = self.query(':AC:STAT:READ?\n').strip()
+        if relay == ':AC:STAT:READ 1':
+            self.cmd(':AC:CONT:RUN 1')
 
     def cmd_stop(self):
         self.cmd(':AC:CONT:RUN 0')
