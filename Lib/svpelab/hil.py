@@ -62,14 +62,26 @@ class HILSimulationException(Exception):
 
 hil_modules = {}
 
-def params(info):
-    info.param_group('hil', label='HIL Parameters', glob=True)
-    info.param('hil.mode', label='HIL Environment', default='Disabled', values=['Disabled'])
-    for mode, m in hil_modules.items():
-        m.params(info)
+def params(info, id=None, label='HIL', group_name=None, active=None, active_value=None):
+    if group_name is None:
+        group_name = HIL_DEFAULT_ID
+    else:
+        group_name += '.' + HIL_DEFAULT_ID
+    if id is not None:
+        group_name = group_name + '_' + str(id)
+    name = lambda name: group_name + '.' + name
+    info.param_group(group_name, label='%s Parameters' % label, active=active, active_value=active_value, glob=True)
+    info.param(name('mode'), label='Mode', default='Disabled', values=['Disabled'])
 
+    #info.param_group('hil', label='HIL Parameters', glob=True)
+    #info.param('hil.mode', label='HIL Environment', default='Disabled', values=['Disabled'])
+    for mode, m in list(hil_modules.items()):
+        #m.params(info)
+        m.params(info, group_name=group_name)
 
-def hil_init(ts):
+HIL_DEFAULT_ID = 'hil'
+
+def hil_init(ts, id=None, group_name=None):
     """
     Function to create specific HIL implementation instances.
 
@@ -77,7 +89,16 @@ def hil_init(ts):
     Module import for the simulator is done within the conditional so modules only need to be
     present if used.
     """
-    mode = ts.param_value('hil.mode')
+    if group_name is None:
+        group_name = HIL_DEFAULT_ID
+    else:
+        group_name += '.' + HIL_DEFAULT_ID
+    if id is not None:
+        group_name = group_name + '_' + str(id)
+    mode = ts.param_value(group_name + '.' + 'mode')
+
+    #mode = ts.param_value('hil.mode')
+
     sim = None
     if mode != 'Disabled':
         hil_module = hil_modules.get(mode)
@@ -101,9 +122,10 @@ class HIL(object):
     Template for HIL implementations. This class can be used as a base class or
     independent HIL classes can be created containing the methods contained in this class.
     """
-
-    def __init__(self, ts, params=None):
+    def __init__(self, ts, group_name):
+    #def __init__(self, ts, params=None):
         self.ts = ts
+        self.group_name = group_name
         self.params = params
 
         if self.params is None:
